@@ -1,5 +1,6 @@
 import pygame
 from pygame import *
+from constants import *
 from gameobjects import GameObject
 
 class Node(GameObject):
@@ -9,13 +10,15 @@ class Node(GameObject):
         self.__parent__ = None
         self.onVisited = [addtolist]
         self.__visited__ = False
+        self.location = []
     def set_parent(self, node):
         self.__visited__= True
         self.__parent__ = node
         for cb in self.onVisited:
             cb(self)
-    def draw(self,pos = [],screen):
-        pygame.draw.circle(screen, (150, 150, 150),[int(pos[0]), int(pos[1])], 50, 1)
+    def draw(self,screen,pos = []):
+        self.location = pos
+        pygame.draw.circle(screen, (150, 150, 150),[int(self.location[0]), int(self.location[1])], 10, 1)
 
 
 class Edge(GameObject):
@@ -23,7 +26,7 @@ class Edge(GameObject):
     def __init__(self,node1,node2):
         self.start = node1
         self.end = node2
-    def draw(self,pos = [],screen):
+    def draw(self,screen,pos = []):
         pygame.draw.line(screen(150,150,150),pos[0],pos[1])
 
 class Graph(GameObject):
@@ -52,7 +55,22 @@ class Graph(GameObject):
         with a root node that branches out to other nodes. The relationship of the distance between nodes should be 
         constant on the y but varying in on the x based on the amount of edges a parent node has(like by adding or subtracting 5 from the parents x '''
     def draw(self, screen):
-
+        current = edges[0].start
+        currentpoint = [SCREEN_WIDTH/2, 10]
+        current.draw(screen,currentpoint)
+        fringe = []
+        fringe.append(current)
+        while len(fringe) > 0:
+            current =fringe[0]
+            fringe.remove(fringe[0])
+            for edge in edges:
+                if edge.start == current:
+                    edge.end.draw(screen,[current.location[0]++10,current.location[1]++10])
+                    pygame.draw.line(screen,BLACK,current.location,edge.end.location)
+                    fringe.append(edge.end)
+            
+    def update(self):
+        return
 
 path = []
 def addtolist(node):

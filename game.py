@@ -3,7 +3,7 @@ import pygame
 from pygame import *
 from gameobjects import GameObject
 from constants import *
-
+from AI import *
 class Game(object):
     '''pygame object'''
 
@@ -26,11 +26,39 @@ class Game(object):
         self.boxlocation = [SCREEN_WIDTH/2,SCREEN_HEIGHT/2]
         self.X = SCREEN_WIDTH/2
         self.Y = SCREEN_HEIGHT/2 
+        self.mygraph = Graph()
+    def testgraph():
+        nodes = []
+        for i in range (0,9):
+            nodes.append(Node(i))
+        edge1 = Edge(nodes[0],nodes[1])
+        edge2 = Edge(nodes[0],nodes[2])
+        edge3 = Edge(nodes[1],nodes[3])
+        edge4 = Edge(nodes[1],nodes[4])
+        edge5 = Edge(nodes[2],nodes[5])
+        edge6 = Edge(nodes[2],nodes[6])
+        edge7 = Edge(nodes[4],nodes[7])
+        edges = []
+        edges.append(edge1)
+        edges.append(edge2)
+        edges.append(edge3)
+        edges.append(edge4)
+        edges.append(edge5)
+        edges.append(edge6)
+        edges.append(edge7)
+
+        mygraph = Graph(nodes)
+        mygraph.edges = edges
+
+
+        mygraph = Graph(nodes)
+        mygraph.edges = edges
     def _startup(self):
+        self.testgraph
         pygame.display.set_caption(self._name)  
         for i in range (0,5):
             self.X +=20
-            self.gameObjects.append(GameObject((5,5),self.X,self.Y))
+            self.gameObjects.append(mygraph)
             i+=1
         return True
 
