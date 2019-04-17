@@ -4,6 +4,7 @@ from pygame import *
 from gameobjects import GameObject
 from constants import *
 from AI import *
+from Objectbehaviour import *
 class Game(object):
     '''pygame object'''
 
@@ -26,8 +27,11 @@ class Game(object):
         self.boxlocation = [SCREEN_WIDTH/2,SCREEN_HEIGHT/2]
         self.X = SCREEN_WIDTH/2
         self.Y = SCREEN_HEIGHT/2 
-        self.mygraph = Graph()
-    def testgraph():
+        self.rect1 = GameObject((10,10),0, (SCREEN_HEIGHT/2))
+        self.rect2 = GameObject((10,10),SCREEN_WIDTH/2,SCREEN_HEIGHT/2)
+        self.behaviour = Objectbehaviour()
+     
+    def testgraph(self):
         nodes = []
         for i in range (0,9):
             nodes.append(Node(i))
@@ -53,12 +57,20 @@ class Game(object):
 
         mygraph = Graph(nodes)
         mygraph.edges = edges
+
+def astar(start,goal):
+    closedlist = []
+    openlist = []
+        
+
+
     def _startup(self):
-        self.testgraph
+        
         pygame.display.set_caption(self._name)  
         for i in range (0,5):
             self.X +=20
-            self.gameObjects.append(mygraph)
+            self.gameObjects.append(self.rect1)
+            self.gameObjects.append(self.rect2)
             i+=1
         return True
 
@@ -68,7 +80,8 @@ class Game(object):
         self._deltatime = seconds / 1000.0
         self._playtime += self._deltatime
         self._events = pygame.event.get()
-        self.gameObjects[0].update()
+        
+        self.gameObjects[0].update(self.behaviour.seek(self.rect1.position,self.rect2.position,5,self.rect1.velocity),self._deltatime)
         for event in self._events:
             if event.type == pygame.KEYDOWN:
                 keystate = pygame.key.get_pressed()                
@@ -76,8 +89,8 @@ class Game(object):
                     pygame.quit()
             if event.type == pygame.constants.QUIT:
                 pygame.quit()
-        for go in self.gameObjects:
-            go.update()
+        #for go in self.gameObjects:
+            #go.update(go)
         return True
         pygame.quit()
 
@@ -89,7 +102,7 @@ class Game(object):
             go.draw(self._screen)        
         pygame.display.flip()
         self._screen.blit(self._background, (0, 0))        
-        self.gameObjects[0].draw(self._background)
+        #self.gameObjects[0].draw(self._background)
     def _shutdown(self):
         '''shutdown the game properly'''
         pygame.quit()

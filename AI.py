@@ -11,6 +11,9 @@ class Node(GameObject):
         self.onVisited = [addtolist]
         self.__visited__ = False
         self.location = []
+        self.F = None
+        self.H = None
+        self.G = None
     def set_parent(self, node):
         self.__visited__= True
         self.__parent__ = node
@@ -36,13 +39,13 @@ class Graph(GameObject):
         self.edges = []
       
 
-    '''def initializegraph(self):
+    def initializegraph(self):
       for i in self.nodes:
-          for j in range [0,len(self.nodes):
+          for j in range (0,len(self.nodes)):
               if(self.nodes[j]==i):
                   continue
               else:
-                  self.edges.append(Edge(i,self.nodes[j]))'''
+                  self.edges.append(Edge(i,self.nodes[j]))
 
     def adjacentedges(self,node):
         adedges = []
@@ -68,7 +71,8 @@ class Graph(GameObject):
                     edge.end.draw(screen,[current.location[0]++10,current.location[1]++10])
                     pygame.draw.line(screen,BLACK,current.location,edge.end.location)
                     fringe.append(edge.end)
-            
+    def Manhattan(start, goal):
+
     def update(self):
         return
 
