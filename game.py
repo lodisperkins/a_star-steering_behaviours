@@ -3,6 +3,7 @@ import pygame
 from pygame import *
 from gameobjects import GameObject
 from constants import *
+from graphobjects import *
 
 class Game(object):
     '''pygame object'''
@@ -28,11 +29,16 @@ class Game(object):
         self.Y = SCREEN_HEIGHT/2 
     def _startup(self):
         pygame.display.set_caption(self._name)  
-        for i in range (0,5):
+        '''for i in range (0,5):
             self.X +=20
             self.gameObjects.append(GameObject((5,5),self.X,self.Y))
-            i+=1
+            i+=1'''
+        mygraph = Graph()
+        mygraph.testgraph(16,[5,6,10],15)
+        mygraph.a_star(0,15)
+        self.gameObjects.append(mygraph)
         return True
+        
 
     def _update(self):
         '''input and time'''
@@ -61,7 +67,7 @@ class Game(object):
             go.draw(self._screen)        
         pygame.display.flip()
         self._screen.blit(self._background, (0, 0))        
-        self.gameObjects[0].draw(self._background)
+        
     def _shutdown(self):
         '''shutdown the game properly'''
         pygame.quit()
