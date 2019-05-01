@@ -2,6 +2,7 @@ import pygame
 from pygame import *
 from gameobjects import GameObject
 import math
+import time
 class Node(GameObject):
 
     def __init__(self,newdata):
@@ -148,7 +149,8 @@ class Graph(GameObject):
         return neighbors
     def draw(self, screen):
         for node in self.nodes:
-            node.draw(screen,((node.gridpos[0]+1)*150,(node.gridpos[1]+1)*100))
+            yield node.draw(screen,((node.gridpos[0]+1)*150,(node.gridpos[1]+1)*100))
+            
         
 
 

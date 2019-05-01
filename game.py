@@ -17,7 +17,6 @@ class Game(object):
 
         self._background = pygame.surface.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
         self._background.fill((255, 255, 255))
-        
         self.font = pygame.font.SysFont('mono', 24, bold=True)        
         self._events = pygame.event.get()
         self.gameObjects = []
@@ -29,40 +28,8 @@ class Game(object):
         self.Y = SCREEN_HEIGHT/2 
         self.rect1 = GameObject((10,10),0, (SCREEN_HEIGHT/2))
         self.rect2 = GameObject((10,10),SCREEN_WIDTH/2,SCREEN_HEIGHT/2)
-        self.behaviour = Objectbehaviour()
-     
-    def testgraph(self):
-        nodes = []
-        for i in range (0,9):
-            nodes.append(Node(i))
-        edge1 = Edge(nodes[0],nodes[1])
-        edge2 = Edge(nodes[0],nodes[2])
-        edge3 = Edge(nodes[1],nodes[3])
-        edge4 = Edge(nodes[1],nodes[4])
-        edge5 = Edge(nodes[2],nodes[5])
-        edge6 = Edge(nodes[2],nodes[6])
-        edge7 = Edge(nodes[4],nodes[7])
-        edges = []
-        edges.append(edge1)
-        edges.append(edge2)
-        edges.append(edge3)
-        edges.append(edge4)
-        edges.append(edge5)
-        edges.append(edge6)
-        edges.append(edge7)
-
-        mygraph = Graph(nodes)
-        mygraph.edges = edges
-
-
-        mygraph = Graph(nodes)
-        mygraph.edges = edges
-
-def astar(start,goal):
-    closedlist = []
-    openlist = []
-        
-
+        seconds = self._clock.tick(self._fps)
+        self._deltatime = seconds / 1000.0
 
     def _startup(self):
         
@@ -71,6 +38,7 @@ def astar(start,goal):
             self.X +=20
             self.gameObjects.append(GameObject((5,5),self.X,self.Y))
             i+=1'''
+        self.cooldown = self._deltatime
         mygraph = Graph()
         mygraph.testgraph(16,[5,6,10],15)
         mygraph.a_star(0,15)
@@ -85,7 +53,7 @@ def astar(start,goal):
         self._playtime += self._deltatime
         self._events = pygame.event.get()
         
-        self.gameObjects[0].update(self.behaviour.seek(self.rect1.position,self.rect2.position,5,self.rect1.velocity),self._deltatime)
+        #self.gameObjects[0].update(self.behaviour.seek(self.rect1.position,self.rect2.position,5,self.rect1.velocity),self._deltatime)
         for event in self._events:
             if event.type == pygame.KEYDOWN:
                 keystate = pygame.key.get_pressed()                
@@ -97,13 +65,17 @@ def astar(start,goal):
             #go.update(go)
         return True
         pygame.quit()
-
+    
     def _draw(self):
         '''need docstring'''
         self.draw_text("FPS: {:6.3}{}PLAYTIME: {:6.3} SECONDS".format(
             self._clock.get_fps(), " " * 5, self._playtime))
-        for go in self.gameObjects:
-            go.draw(self._screen)        
+        '''for go in self.gameObjects:
+            go.draw(self._screen)'''
+        draw =self.gameObjects[0].draw(self._screen)
+        if(self._deltatime == self.cooldown+1):
+            self.cooldown= self._deltatime
+            next(draw)
         pygame.display.flip()
         self._screen.blit(self._background, (0, 0))        
         
@@ -120,3 +92,5 @@ def astar(start,goal):
 if __name__ == '__main__':
     import main as Main
     Main.main()
+
+
