@@ -30,7 +30,7 @@ class Game(object):
         self.rect2 = GameObject((10,10),SCREEN_WIDTH/2,SCREEN_HEIGHT/2)
         seconds = self._clock.tick(self._fps)
         self._deltatime = seconds / 1000.0
-
+        self.nodecounter = 0
     def _startup(self):
         
         pygame.display.set_caption(self._name)  
@@ -38,11 +38,11 @@ class Game(object):
             self.X +=20
             self.gameObjects.append(GameObject((5,5),self.X,self.Y))
             i+=1'''
-        self.cooldown = self._deltatime
-        mygraph = Graph()
-        mygraph.testgraph(16,[5,6,10],15)
-        mygraph.a_star(0,15)
-        self.gameObjects.append(mygraph)
+        self.cooldown = 2.0
+        self.mygraph = Graph()
+        self.mygraph.testgraph(16,[5,6,10],15)
+        self.path =self.mygraph.createpath(self._background,0,15)
+        self.gameObjects.append(self.mygraph)
         return True
         
 
@@ -70,12 +70,13 @@ class Game(object):
         '''need docstring'''
         self.draw_text("FPS: {:6.3}{}PLAYTIME: {:6.3} SECONDS".format(
             self._clock.get_fps(), " " * 5, self._playtime))
-        '''for go in self.gameObjects:
-            go.draw(self._screen)'''
-        draw =self.gameObjects[0].draw(self._screen)
-        if(self._deltatime == self.cooldown+1):
-            self.cooldown= self._deltatime
-            next(draw)
+        for go in self.gameObjects:
+            go.draw(self._screen)
+        if(self._playtime > self.cooldown):
+            if (self.nodecounter < len(self.mygraph.a_star(0,15))):
+                self.cooldown= self._playtime +1.0
+                next(self.path)
+                self.nodecounter+=1
         pygame.display.flip()
         self._screen.blit(self._background, (0, 0))        
         

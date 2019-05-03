@@ -13,7 +13,10 @@ class Node(GameObject):
         self.isobstacle = False
         self.isgoal = False
         self.ispath = False
+        self.isstart = False
+        self.isneighbor = False
         self.gridpos=(None,None)
+        self.position = (None,None)
         self.G = 0
         self.H = 0
         self.F = 0
@@ -28,9 +31,13 @@ class Node(GameObject):
         if self.isobstacle == True:
             pygame.draw.circle(screen,(0, 0, 0),[int(pos[0]), int(pos[1])], 50)
         elif self.isgoal == True:
-            pygame.draw.circle(screen,(0, 128, 0),[int(pos[0]), int(pos[1])], 50)
+            pygame.draw.circle(screen,(255, 0, 0),[int(pos[0]), int(pos[1])], 50)
         elif self. ispath == True:
             pygame.draw.circle(screen,(255, 255, 0),[int(pos[0]), int(pos[1])], 50)
+        elif self.isstart ==True:
+            pygame.draw.circle(screen,(0, 255, 0),[int(pos[0]), int(pos[1])], 50)
+        elif self.isneighbor ==True:
+            pygame.draw.circle(screen,(0, 0, 255),[int(pos[0]), int(pos[1])], 50)
         else:
             pygame.draw.circle(screen, (50, 50, 50),[int(pos[0]), int(pos[1])], 50, 1)
 
@@ -41,8 +48,8 @@ class Edge(GameObject):
         self.start = node1
         self.end = node2
         self.G = cost
-    def draw(self,screen,pos = []):
-        pygame.draw.line(screen(150,150,150),pos[0],pos[1])
+    def draw(self,screen):
+        pygame.draw.line(screen,(150,150,150),self.start.position,self.end.position)
 
 class Graph(GameObject):
 
@@ -55,7 +62,6 @@ class Graph(GameObject):
         while current != start:
             path.insert(0,current)
             current = current.get_parent()
-            current.ispath = True
         return path
     def manhattan(self, node, goal):
         return 10*(abs(goal.gridpos[0]-node.gridpos[0]) + abs(goal.gridpos[1]-node.gridpos[1]))
@@ -85,8 +91,19 @@ class Graph(GameObject):
 		}
 	}
 }'''
+    def drawneighbors(self,screen,node):
+        for edge in self.get_neighbors(node):
+            edge.end.isneighbor = True
+            edge.start.isneighbor = True
+            edge.draw(screen)
+    def createpath(self,screen,start,goal):
+        for node in self.a_star(start,goal):
+            node.ispath = True
+            self.drawneighbors(screen,node)
+            yield
     def a_star(self, start, goal):
         start = self.nodes[start]
+        start.isstart = True
         goal = self.nodes[goal]        
         openlist = [start]
         closedlist = []
@@ -144,12 +161,13 @@ class Graph(GameObject):
     def get_neighbors(self,node):
         neighbors = []
         for i in self.edges:
-            if(i.start == node):
+            if(i.start == node or i.end == node):
                 neighbors.append(i)
         return neighbors
     def draw(self, screen):
         for node in self.nodes:
-            yield node.draw(screen,((node.gridpos[0]+1)*150,(node.gridpos[1]+1)*100))
+            node.position =((node.gridpos[0]+1)*150,(node.gridpos[1]+1)*100)
+            node.draw(screen,node.position)
             
         
 
