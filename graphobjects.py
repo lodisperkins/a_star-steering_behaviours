@@ -16,7 +16,6 @@ class Node(GameObject):
         self.isstart = False
         self.isneighbor = False
         self.gridpos=(None,None)
-        self.position = (None,None)
         self.G = 0
         self.H = 0
         self.F = 0

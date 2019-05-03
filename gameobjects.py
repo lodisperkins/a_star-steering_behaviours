@@ -7,9 +7,10 @@ class GameObject:
         self.position = Vector2(X,Y)
         self.velocity = Vector2(0,0)
     def draw(self,screen):
-        pygame.draw.circle(screen, (150, 150, 150),[int(self.position[0]), int(self.position[1])], 50, 1)
-        #screen.blit(self.shape, self.position)
-    def update(self):
+        #pygame.draw.circle(screen, (150, 150, 150),[int(self.position[0]), int(self.position[1])], 50, 1)
+        screen.blit(self.shape, self.position)
+    def update(self,vec,time):
+       self.position = self.position+(vec*time)
        return
 
     
