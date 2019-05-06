@@ -28,8 +28,8 @@ class Game(object):
         seconds = self._clock.tick(self._fps)
         self._deltatime = seconds / 1000.0
         self.doing_astar = False
-        self.doing_behaviour = False
-        self.behaviour = Objectbehaviour()
+        self.doing_seek = False
+        self.behaviour = ObjectBehaviour()
     def _startup(self):
         
         pygame.display.set_caption(self._name) 
@@ -50,17 +50,22 @@ class Game(object):
         self.gameObjects.append(self.mygraph)
         self.nodecounter = 0
         self.doing_astar = True
-        self.doing_behaviour = False
-    def initialize_behaviour(self):
+        self.doing_seek = False
+    def seek_behaviour(self):
         self._background.fill(WHITE)
-        self.rect1 = GameObject((10,10),0, (SCREEN_HEIGHT/2))
+        self.rect1 = GameObject((10,10),40, (SCREEN_HEIGHT)/2)
+        self.rect1.is_chaser = True
         self.rect2 = GameObject((10,10),SCREEN_WIDTH/2,SCREEN_HEIGHT/2)
         self.gameObjects.clear()
         self.gameObjects.append(self.rect1)
         self.gameObjects.append(self.rect2)
-        self.doing_behaviour = True
+        self.doing_seek = True
         self.doing_astar = False
         self.oldtarget = 0
+    def pursue_behaviour(self):
+        self.seek_behaviour()
+        self.doing_seek = False
+        self.doing_pursue = True
     def _update(self):
         '''input and time'''
         
@@ -83,25 +88,25 @@ class Game(object):
             if event.type == pygame.KEYDOWN:
                 keystate = pygame.key.get_pressed()
                 if keystate[pygame.constants.K_b]:
-                   self.initialize_behaviour()
+                   self.seek_behaviour()
+            if event.type == pygame.KEYDOWN:
+                keystate = pygame.key.get_pressed()
+                if keystate[pygame.constants.K_s]:
+                   self.seek_behaviour()
 
-        if (self.doing_behaviour == True):
+
+        if self.doing_seek:
+            self.gameObjects[0].check_position([0,SCREEN_WIDTH,0,SCREEN_HEIGHT])
+            self.gameObjects[1].check_position([0,SCREEN_WIDTH,0,SCREEN_HEIGHT])
             #self.oldtarget =self.gameObjects[0].update(self.behaviour.wander(self.rect1,self.oldtarget),self._deltatime)
-            self.check_position(self.gameObjects)
-            self.gameObjects[0].update(self.behaviour.pursue(self.rect1,self.rect2,5,self.rect1.velocity),self._deltatime)
-            self.gameObjects[1].update(self.behaviour.avoid(self.rect2,self.rect1,5),self._deltatime)
+            self.gameObjects[0].update(self.rect2,self._deltatime)
+            self.gameObjects[1].update(self.rect1,self._deltatime)
             
             '''for go in self.gameObjects:
                 go.update(self.behaviour.seek(self.rect1.position,self.rect2.position,5,self.rect1.velocity),self._deltatime)'''
             '''seek(self.rect1.position,self.rect2.position,5,self.rect1.velocity)'''
         return True
         pygame.quit()
-    def check_position(self,objects):
-        for ob in objects:
-            if ob.position.x >=SCREEN_WIDTH-50:
-                ob.position += ob.velocity.rotate(250)
-            elif ob.position.y >= SCREEN_HEIGHT - 50:
-                ob.position += ob.velocity.rotate(250)
 
     def _draw(self):
         '''need docstring'''
