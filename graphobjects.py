@@ -52,8 +52,8 @@ class Edge(GameObject):
 
 class Graph(GameObject):
 
-    def __init__(self,nodes=[]):
-        self.nodes = nodes
+    def __init__(self):
+        self.nodes = []
         self.edges = []
     def reconsructpath(self,start,goal):
         path = []

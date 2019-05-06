@@ -41,6 +41,7 @@ class Game(object):
         
         return True
     def initialize_astar(self):
+        self._background.fill(WHITE)
         self.cooldown = self._playtime +2.0
         self.mygraph = Graph()
         self.mygraph.testgraph(16,[5,6,10],15)
@@ -51,6 +52,7 @@ class Game(object):
         self.doing_astar = True
         self.doing_behaviour = False
     def initialize_behaviour(self):
+        self._background.fill(WHITE)
         self.rect1 = GameObject((10,10),0, (SCREEN_HEIGHT/2))
         self.rect2 = GameObject((10,10),SCREEN_WIDTH/2,SCREEN_HEIGHT/2)
         self.gameObjects.clear()
@@ -58,8 +60,10 @@ class Game(object):
         self.gameObjects.append(self.rect2)
         self.doing_behaviour = True
         self.doing_astar = False
+        self.oldtarget = 0
     def _update(self):
         '''input and time'''
+        
         seconds = self._clock.tick(self._fps)
         self._deltatime = seconds / 1000.0
         self._playtime += self._deltatime
@@ -82,12 +86,23 @@ class Game(object):
                    self.initialize_behaviour()
 
         if (self.doing_behaviour == True):
-            self.gameObjects[0].update(self.behaviour.seek(self.rect1.position,self.rect2.position,5,self.rect1.velocity),self._deltatime) 
-            for go in self.gameObjects:
-                go.update(self.behaviour.seek(self.rect1.position,self.rect2.position,5,self.rect1.velocity),self._deltatime)
+            #self.oldtarget =self.gameObjects[0].update(self.behaviour.wander(self.rect1,self.oldtarget),self._deltatime)
+            self.check_position(self.gameObjects)
+            self.gameObjects[0].update(self.behaviour.pursue(self.rect1,self.rect2,5,self.rect1.velocity),self._deltatime)
+            self.gameObjects[1].update(self.behaviour.avoid(self.rect2,self.rect1,5),self._deltatime)
+            
+            '''for go in self.gameObjects:
+                go.update(self.behaviour.seek(self.rect1.position,self.rect2.position,5,self.rect1.velocity),self._deltatime)'''
+            '''seek(self.rect1.position,self.rect2.position,5,self.rect1.velocity)'''
         return True
         pygame.quit()
-    
+    def check_position(self,objects):
+        for ob in objects:
+            if ob.position.x >=SCREEN_WIDTH-50:
+                ob.position += ob.velocity.rotate(250)
+            elif ob.position.y >= SCREEN_HEIGHT - 50:
+                ob.position += ob.velocity.rotate(250)
+
     def _draw(self):
         '''need docstring'''
         self.draw_text("FPS: {:6.3}{}PLAYTIME: {:6.3} SECONDS".format(
