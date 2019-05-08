@@ -53,9 +53,9 @@ class Game(object):
         self.doing_seek = False
     def seek_behaviour(self):
         self._background.fill(WHITE)
-        self.rect1 = GameObject((10,10),40, (SCREEN_HEIGHT)/2)
+        self.rect1 = GameObject((10,10),40, (SCREEN_HEIGHT)/2,0,BLUE)
         self.rect1.is_chaser = True
-        self.rect2 = GameObject((10,10),SCREEN_WIDTH/2,SCREEN_HEIGHT/2)
+        self.rect2 = GameObject((10,10),SCREEN_WIDTH/2,SCREEN_HEIGHT/2,0,RED)
         self.gameObjects.clear()
         self.gameObjects.append(self.rect1)
         self.gameObjects.append(self.rect2)

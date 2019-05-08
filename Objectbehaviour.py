@@ -1,4 +1,4 @@
-from gameobjects import *
+from pygame import *
 import math
 import random
 class ObjectBehaviour:
@@ -20,12 +20,12 @@ class ObjectBehaviour:
     def wander(self,vec1,oldcenter,maximum):
         radius = 5
         displacement =Vector2(0,-1)*radius
-        distance = 5
+        distance = 10
         if vec1.velocity.magnitude() == 0:
             center = (vec1.position.normalize()  *distance)
         else:
             center = (vec1.velocity.normalize() *distance)
-        displacement= displacement.rotate(random.randint(-180,180))
+        displacement= displacement.rotate(random.randint(-270,270))
         wanderforce =center +displacement
         if center == oldcenter:
             self.wander(vec1,center,maximum)
