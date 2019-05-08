@@ -20,9 +20,10 @@ class GameObject:
         else:
             self.shape.fill(BLUE)
         screen.blit(self.shape, self.position)
+        
     def update(self,gameobject,time):
         self.make_decision(gameobject)
-        self.velocity = self.behaviour*time
+        self.velocity = self.behaviour
         self.position +=self.velocity
         return
     def check_position(self,bounds):
@@ -37,9 +38,9 @@ class GameObject:
             self.position =  Vector2(random.randint(bounds[0],bounds[1]),random.randint(bounds[2],bounds[3]))
     def make_decision(self,gameobject):
         if self.is_chaser:
-            self.behaviour =self.state.seek(self,gameobject.position,self.maximum_speed*0)
+            self.behaviour =self.state.seek(self,gameobject.position,self.maximum_speed*3)
             if self.state.distance(self,gameobject) <= 100:
-                self.behaviour =self.state.seek(self,gameobject.position,self.maximum_speed*2)
+                self.behaviour =self.state.seek(self,gameobject.position,self.maximum_speed*5)
             if self.state.distance(self,gameobject) <= 5:
                 self.behaviour = self.state.flee(self,gameobject.position,self.maximum_speed)
                 self.is_chaser = False
@@ -54,7 +55,9 @@ class GameObject:
                 self.is_chaser = False
                 gameobject.is_chaser = True
            
-
+if __name__ == '__main__':
+    import main as Main
+    Main.main()
 
     
 

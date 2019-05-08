@@ -19,15 +19,17 @@ class ObjectBehaviour:
         #(((vec2-vec1).normalize)* max) - velocity
     def wander(self,vec1,oldtarget):
         radius = 10
-        target = Vector2(math.cos(random.randint(-1,1)),math.sin(random.randint(-1,1)))*radius
         jitter =5
-        distance = 2
-        target += Vector2(random.randint(-5,5),random.randint(-5,5))*jitter
-        target =target.normalize()*radius
-        target += vec1.velocity*distance
+        distance = 10
+        if vec1.velocity.magnitude() == 0:
+            target = vec1.position *distance
+        else:
+            target = vec1.position+(vec1.velocity *distance)
+        jitter= target.rotate(random.randint(-180,180))
+        target +=jitter.normalize()*radius
         if target == oldtarget:
             self.wander(vec1,target)
-        return self.seek(vec1,target,50)
+        return self.seek(vec1,target,10)
     def pursue(self,vec1,vec2,maximum):
         newvec = vec2.position + vec2.velocity-vec1.position
         newvec =newvec.normalize()
@@ -45,3 +47,6 @@ class ObjectBehaviour:
         for num in range (0,len(vec1.position)):
             number+=((float(vec2.position[num])-float(vec1.position[num]))**2)
         return math.sqrt(number)
+    if __name__ == '__main__':
+        import main as Main
+        Main.main()
