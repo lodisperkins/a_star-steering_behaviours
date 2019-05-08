@@ -17,19 +17,19 @@ class ObjectBehaviour:
         newvec = (newvec * maximum) - vec1.velocity
         return newvec.rotate(180)
         #(((vec2-vec1).normalize)* max) - velocity
-    def wander(self,vec1,oldtarget):
-        radius = 10
-        jitter =5
-        distance = 10
+    def wander(self,vec1,oldcenter,maximum):
+        radius = 5
+        displacement =Vector2(0,-1)*radius
+        distance = 5
         if vec1.velocity.magnitude() == 0:
-            target = vec1.position *distance
+            center = (vec1.position.normalize()  *distance)
         else:
-            target = vec1.position+(vec1.velocity *distance)
-        jitter= target.rotate(random.randint(-180,180))
-        target +=jitter.normalize()*radius
-        if target == oldtarget:
-            self.wander(vec1,target)
-        return self.seek(vec1,target,10)
+            center = (vec1.velocity.normalize() *distance)
+        displacement= displacement.rotate(random.randint(-180,180))
+        wanderforce =center +displacement
+        if center == oldcenter:
+            self.wander(vec1,center,maximum)
+        return wanderforce.normalize()*maximum
     def pursue(self,vec1,vec2,maximum):
         newvec = vec2.position + vec2.velocity-vec1.position
         newvec =newvec.normalize()
