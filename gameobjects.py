@@ -10,15 +10,16 @@ class GameObject:
         self.velocity = Vector2(0,0)
         self.radius = rad
         self.is_chaser = False
+        self.doing_seek = False
         self.state = ObjectBehaviour()
         self.behaviour =None
-        self.wanderforce = 10
+        self.wanderforce = 5
         self.fleeforce =50
         self.seekforce =self.fleeforce*5
         self.maximum_speed = 0
         self.color = colorval
     def draw(self,screen):
-        #pygame.draw.circle(screen, (150, 150, 150),[int(self.position[0]), int(self.position[1])], 50, 1)
+        pygame.draw.line(screen,BLACK,self.position,self.position+self.velocity)
         self.shape.fill(self.color)
         screen.blit(self.shape, self.position)
         
@@ -31,37 +32,61 @@ class GameObject:
         return
     def check_position(self,bounds):
         if self.position.x <=bounds[0] or self.position.x>= bounds[1] and self.position.y <= bounds[2]or self.position.y >= bounds[3]:
-            #self.position += self.velocity.rotate(90)*2
             self.position =  Vector2(random.randint(bounds[0],bounds[1]),random.randint(bounds[2],bounds[3]))
         elif self.position.y <= bounds[2]or self.position.y >= bounds[3]:
-            #self.position += self.velocity.rotate(90)*2
             self.position =  Vector2(random.randint(bounds[0],bounds[1]),random.randint(bounds[2],bounds[3]))
         elif self.position.x <=bounds[0] or self.position.x>= bounds[1]:
-            #self.position += self.velocity.rotate(90)*2
             self.position =  Vector2(random.randint(bounds[0],bounds[1]),random.randint(bounds[2],bounds[3]))
+
     def make_decision(self,gameobject):
-        if self.is_chaser:
-            self.maximum_speed =  80
-            self.behaviour =self.state.seek(self,gameobject.position,self.maximum_speed*self.seekforce)
-            if self.state.distance(self,gameobject) <= 100:
-                self.behaviour =self.state.seek(self,gameobject.position,self.maximum_speed)
-            if self.state.distance(self,gameobject) <= 5:
-                gameobject.position =  Vector2(random.randint(0,1200),random.randint(0,600))
-                self.behaviour = self.state.flee(self,gameobject.position,self.maximum_speed)
-                self.is_chaser = False
-                gameobject.is_chaser = True
+        if self.doing_seek:
+            if self.is_chaser:
+                self.maximum_speed =  80
+                self.behaviour =self.state.seek(self,gameobject.position,self.maximum_speed*self.seekforce)
+                if self.state.distance(self,gameobject) <= 100:
+                    self.behaviour =self.state.seek(self,gameobject.position,self.maximum_speed)
+                if self.state.distance(self,gameobject) <= 5:
+                    gameobject.position =  Vector2(random.randint(0,1200),random.randint(0,600))
+                    self.behaviour = self.state.flee(self,gameobject.position,self.maximum_speed)
+                    self.is_chaser = False
+                    gameobject.is_chaser = True
+            else:
+                self.maximum_speed =  20
+                if self.state.distance(self,gameobject) <= 100:
+                    self.behaviour = self.state.flee(self,gameobject.position,self.maximum_speed*self.fleeforce)
+                    self.maximum_speed =  40
+                elif self.state.distance(self,gameobject) <= 5:
+                    self.behaviour = self.state.seek(self,gameobject.position,self.maximum_speed*self.seekforce)
+                    self.maximum_speed =  40
+                    self.is_chaser = False
+                    gameobject.is_chaser = True
+                else:
+                    self.behaviour = self.state.wander(self,self.behaviour,self.wanderforce)
         else:
-            self.maximum_speed =  20
-            self.behaviour = self.state.wander(self,self.behaviour,self.wanderforce)
-            if self.state.distance(self,gameobject) <= 100:
-                self.behaviour = self.state.flee(self,gameobject.position,self.maximum_speed*self.fleeforce)
-                self.maximum_speed =  40
-            if self.state.distance(self,gameobject) <= 10:
-                self.behaviour = self.state.seek(self,gameobject.position,self.maximum_speed*self.fleeforce)
-                self.maximum_speed =  40
-                self.is_chaser = False
-                gameobject.is_chaser = True
-           
+            if self.is_chaser:
+                self.maximum_speed =  100
+                if self.state.distance(self,gameobject) <= 100:
+                    self.behaviour =self.state.pursue(self,gameobject,self.maximum_speed)
+                if self.state.distance(self,gameobject) <= 10:
+                    gameobject.position =  Vector2(random.randint(0,1200),random.randint(0,600))
+                    self.behaviour = self.state.avoid(self,gameobject,self.maximum_speed)
+                    self.is_chaser = False
+                    gameobject.is_chaser = True
+                else:
+                    self.behaviour =self.state.pursue(self,gameobject,self.maximum_speed)
+            else:
+                self.maximum_speed =  50
+                if self.state.distance(self,gameobject) <= 100:
+                    self.behaviour = self.state.avoid(self,gameobject,self.maximum_speed)
+                    self.maximum_speed =  50
+                elif self.state.distance(self,gameobject) <= 10:
+                    self.behaviour = self.state.pursue(self,gameobject,self.maximum_speed)
+                    self.maximum_speed =  50
+                    self.is_chaser = False
+                    gameobject.is_chaser = True
+                else:
+                    self.behaviour =self.state.seek(self,[600,0],self.maximum_speed)
+
 if __name__ == '__main__':
     import main as Main
     Main.main()

@@ -31,17 +31,17 @@ class ObjectBehaviour:
             self.wander(vec1,center,maximum)
         return wanderforce.normalize()*maximum
     def pursue(self,vec1,vec2,maximum):
-        newvec = vec2.position + vec2.velocity-vec1.position
+        newvec = (vec2.position + vec2.velocity)-vec1.position
         newvec =newvec.normalize()
         newvec = (newvec * maximum) - vec1.velocity
         if self.distance(vec1,vec2) <= vec2.radius:
             newvec = newvec -(newvec /2)
         return newvec
     def avoid(self,vec1,vec2,maximum):
-        newvec = vec2.position + vec2.velocity-vec1.position
+        newvec = (vec2.position + vec2.velocity)-vec1.position
         newvec =newvec.normalize()
         newvec = (newvec * maximum) - vec1.velocity
-        return newvec.rotate(180)
+        return newvec.rotate(90)
     def distance(self,vec1,vec2):
         number = 0
         for num in range (0,len(vec1.position)):
