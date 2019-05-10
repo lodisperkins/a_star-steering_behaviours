@@ -31,21 +31,16 @@ class Game(object):
         self.doing_seek = False
         self.doing_pursue= False
         self.behaviour = ObjectBehaviour()
+
     def _startup(self):
-        
         pygame.display.set_caption(self._name) 
-        
-        '''for i in range (0,5):
-            self.X +=20
-            self.gameObjects.append(GameObject((5,5),self.X,self.Y))
-            i+=1'''
-        
         return True
+    '''Clears the screen, creates a graph, and sets up start, obstacle, and goal nodes'''    
     def initialize_astar(self):
         self._background.fill(WHITE)
         self.cooldown = self._playtime +2.0
         self.mygraph = Graph()
-        self.mygraph.testgraph(16,[5,6,10],15)
+        self.mygraph.creategraph(16,[5,6,10],15)
         self.path =self.mygraph.createpath(self._background,0,15)
         self.gameObjects.clear()
         self.gameObjects.append(self.mygraph)
@@ -53,6 +48,7 @@ class Game(object):
         self.doing_astar = True
         self.doing_seek = False
         self.doing_pursue = False
+    '''Clears the screen and initializes all values needed to demonstrate seek behaviour'''
     def seek_behaviour(self):
         self._background.fill(WHITE)
         self.rect1 = GameObject((10,10),40, (SCREEN_HEIGHT)/2,0,BLUE)
@@ -64,6 +60,7 @@ class Game(object):
         self.doing_seek = True
         self.doing_astar = False
         self.oldtarget = 0
+    '''Clears the screen and initializes all values needed to demonstrate seek behaviour'''
     def pursue_behaviour(self):
         self._background.fill(WHITE)
         self.rect1 = GameObject((10,10),40, (SCREEN_HEIGHT)/2,0,RED)
@@ -102,20 +99,17 @@ class Game(object):
                 keystate = pygame.key.get_pressed()
                 if keystate[pygame.constants.K_s]:
                    self.seek_behaviour()
-
+        '''Updates the game objects position based on whether seek or pursue is being demonstrated''' 
         if self.doing_seek:
             self.gameObjects[0].check_position([0,SCREEN_WIDTH,0,SCREEN_HEIGHT])
             self.gameObjects[1].check_position([0,SCREEN_WIDTH,0,SCREEN_HEIGHT])
 
             self.gameObjects[0].doing_seek =True
             self.gameObjects[1].doing_seek =True
-            #self.oldtarget =self.gameObjects[0].update(self.behaviour.wander(self.rect1,self.oldtarget),self._deltatime)
+           
             self.gameObjects[0].update(self.rect2,self._deltatime)
             self.gameObjects[1].update(self.rect1,self._deltatime)
             
-            '''for go in self.gameObjects:
-                go.update(self.behaviour.seek(self.rect1.position,self.rect2.position,5,self.rect1.velocity),self._deltatime)'''
-            '''seek(self.rect1.position,self.rect2.position,5,self.rect1.velocity)'''
         elif self.doing_pursue:
             self.gameObjects[0].check_position([0,SCREEN_WIDTH,0,SCREEN_HEIGHT])
             self.gameObjects[1].check_position([0,SCREEN_WIDTH,0,SCREEN_HEIGHT])

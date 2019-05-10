@@ -19,13 +19,16 @@ class Node(GameObject):
         self.G = 0
         self.H = 0
         self.F = 0
+    '''Sets the nodes parent to the node in the argument list'''
     def set_parent(self, node):
         self.__visited__= True
         self.parent = node
         for cb in self.onVisited:
             cb(self)
+    '''Returns the nodes parent'''
     def get_parent(self):
         return self.parent
+    '''Draws each node to the screen. Color is based on te type of node'''
     def draw(self,screen,pos = []):
         if self.isobstacle == True:
             pygame.draw.circle(screen,(0, 0, 0),[int(pos[0]), int(pos[1])], 50)
@@ -47,6 +50,7 @@ class Edge(GameObject):
         self.start = node1
         self.end = node2
         self.G = cost
+    '''Draws a line between nodes who share an edge'''
     def draw(self,screen):
         pygame.draw.line(screen,(150,150,150),self.start.position,self.end.position)
 
@@ -55,6 +59,7 @@ class Graph(GameObject):
     def __init__(self):
         self.nodes = []
         self.edges = []
+    '''Returns a list of nodes trailing from the goal nodes parent'''
     def reconsructpath(self,start,goal):
         path = []
         current = goal
@@ -62,8 +67,10 @@ class Graph(GameObject):
             path.insert(0,current)
             current = current.get_parent()
         return path
+    '''Calculates manhattan distance between two nodes'''
     def manhattan(self, node, goal):
         return 10*(abs(goal.gridpos[0]-node.gridpos[0]) + abs(goal.gridpos[1]-node.gridpos[1]))
+    '''Sorts a list of nodes based on their F score'''
     def sortnodes(self,nodelist):
         i = 0
         j =0
@@ -75,31 +82,19 @@ class Graph(GameObject):
                     nodelist[j] = temp  
                 j+=1
             i+=1
-            '''void BubbleSorting(J arr[], int size)
-{
-	for (int i = 0; i < size; i++)
-	{
-		for (int j = i; j < size; j++)
-		{
-			if (arr[i] > arr[j])
-			{
-				J temp = arr[i];
-				arr[i] = arr[j];
-				arr[j] = temp;
-			}
-		}
-	}
-}'''
+    '''Draws all edges connecting the current node and its neighbors'''
     def drawneighbors(self,screen,node):
         for edge in self.get_neighbors(node):
             edge.end.isneighbor = True
             edge.start.isneighbor = True
             edge.draw(screen)
+    '''Labels each node in the path list as a path and draws all of its edges'''
     def createpath(self,screen,start,goal):
         for node in self.a_star(start,goal):
             node.ispath = True
             self.drawneighbors(screen,node)
             yield
+    '''Finds the shortest path between two nodes using the a star algorithm'''
     def a_star(self, start, goal):
         start = self.nodes[start]
         start.isstart = True
@@ -124,6 +119,8 @@ class Graph(GameObject):
                     neighbor.end.F = neighbor.end.G + self.manhattan(neighbor.end, goal)
                     neighbor.end.set_parent(current)
                     openlist.append(neighbor.end)
+    '''Gives each node a corresponding graph position based on their order in the nodes list.
+       An edge is created connecting each node to its neighbors based on graph position'''
     def initializegraph(self):
         dim = int(math.sqrt(len(self.nodes)))-1
         xpos = 0
@@ -148,7 +145,8 @@ class Graph(GameObject):
                 ypos+=1
                 continue
             xpos+=1
-    def testgraph(self,size,obstacles=[],goal = 0):
+    '''Creates a graph with specified obstacles, a specified size and goal'''
+    def creategraph(self,size,obstacles=[],goal = 0):
         for i in range(0,size):
             self.nodes.append(Node(i))
         for num in obstacles:
@@ -156,25 +154,23 @@ class Graph(GameObject):
         self.nodes[goal].isgoal = True
         self.initializegraph()
 
-
+    '''Returns a list of edges containing the neigbors for the node'''
     def get_neighbors(self,node):
         neighbors = []
         for i in self.edges:
             if(i.start == node or i.end == node):
                 neighbors.append(i)
         return neighbors
+    '''Draws each node at their graph position scaled to the appropriate screen position'''
     def draw(self, screen):
         for node in self.nodes:
             node.position =((node.gridpos[0]+1)*150,(node.gridpos[1]+1)*100)
             node.draw(screen,node.position)
             
-        
-
-
 path = []
 def addtolist(node):
     path.append(node)
-    
+'''Finds a path between two  nodes using the breadth first algorithm'''
 def bfs(graph,startnode,goal):
     discovered=[]
     discovered.append(startnode)
