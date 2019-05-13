@@ -60,7 +60,7 @@ class Game(object):
         self.doing_seek = True
         self.doing_astar = False
         self.oldtarget = 0
-    '''Clears the screen and initializes all values needed to demonstrate seek behaviour'''
+    '''Clears the screen and initializes all values needed to demonstrate pursue behaviour'''
     def pursue_behaviour(self):
         self._background.fill(WHITE)
         self.rect1 = GameObject((10,10),40, (SCREEN_HEIGHT)/2,0,RED)
@@ -121,7 +121,7 @@ class Game(object):
 
     def _draw(self):
         '''need docstring'''
-        self.draw_text("FPS: {:6.3}{}PLAYTIME: {:6.3} SECONDS".format(
+        self.draw_text("FPS:{:6.3}{}PLAYTIME:{:6.3} SECONDS  Press 'A' - A*Demo,'S' Seek Demo,'P' Pursue Demo".format(
             self._clock.get_fps(), " " * 5, self._playtime))
         for go in self.gameObjects:
             go.draw(self._screen)
